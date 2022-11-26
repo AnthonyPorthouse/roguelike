@@ -1,6 +1,5 @@
 import tk from "terminal-kit";
 import Map from "./map.js";
-import Cell, { EmptyCell, FloorCell } from "./cell.js";
 import TileType from "./tileType.js";
 import Player from "./player.js";
 import Game from "./game.js";
@@ -20,19 +19,16 @@ export function terminate() {
   }, 100);
 }
 
-const map = new Map(20, 20, {
-  [new Vector2(1, 1).toString()]: EmptyCell().reveal(),
-  [new Vector2(2, 1).toString()]: EmptyCell().reveal(),
-  [new Vector2(3, 1).toString()]: EmptyCell().reveal(),
-  [new Vector2(1, 2).toString()]: EmptyCell().reveal(),
-  [new Vector2(2, 2).toString()]: FloorCell().reveal(),
-  [new Vector2(3, 2).toString()]: EmptyCell().reveal(),
-  [new Vector2(1, 3).toString()]: EmptyCell().reveal(),
-  [new Vector2(2, 3).toString()]: EmptyCell().reveal(),
-  [new Vector2(3, 3).toString()]: EmptyCell().reveal(),
-});
+const map = new Map(terminal.width, terminal.height, {});
 
-const player = new Player(new Vector2(2, 2));
+const floorCells = Object.entries(map.getCells()).filter(([_, cell]) => {
+  return cell.getType() === TileType.FLOOR
+})
+
+const [startingPoint] = floorCells[Math.floor(Math.random() * floorCells.length)]
+
+
+const player = new Player(Vector2.fromCoords(startingPoint));
 
 const game = new Game(map, player);
 

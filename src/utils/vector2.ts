@@ -32,20 +32,16 @@ export default class Vector2 {
     return new Vector2(this.x + other.x, this.y + other.y);
   }
 
-  public getSurrounding() {
-    const surrounding: Vector2[] = [];
-
+  public *getSurrounding() {
     for (let x = -1; x <= 1; x++) {
       for (let y = -1; y <= 1; y++) {
         if (x === 0 && y === 0) {
           continue;
         }
 
-        surrounding.push(this.add(new Vector2(x, y)));
+        yield this.add(new Vector2(x, y));
       }
     }
-
-    return surrounding;
   }
 
   public toString() {

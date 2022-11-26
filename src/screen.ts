@@ -38,7 +38,7 @@ export default class Screen {
   }
 
   writeMessage(message: string) {
-    this.messageBuffer.fill();
+    this.messageBuffer.clear()
     this.messageBuffer.put(
       {
         x: 0,

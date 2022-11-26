@@ -1,7 +1,8 @@
-import Cell, { EmptyCell } from "./cell.js";
+import Cell, { WallCell } from "./cell.js";
 import Vector2 from "./utils/vector2.js";
 import TileType from "./tileType.js";
 import WallTiles from "./assets/WallTiles.js";
+import StructureLoader from "./structures/loader.js";
 
 export default class Map {
   public readonly width: number;
@@ -13,20 +14,33 @@ export default class Map {
     this.width = width;
     this.height = height;
 
-    this.cells = {};
+    this.cells = cells;
 
-    for (const y of Array(height).keys()) {
-      for (const x of Array(width).keys()) {
-        const point = new Vector2(x, y).toString();
-        if (cells[point]) {
-          this.cells[point] = cells[point];
-        }
+    const structureLoader = new StructureLoader(new URL('./res/structures', import.meta.url).pathname)
+    const structures = structureLoader.getStructures();
+
+    for(const structure of structures) {
+      const xOffset = Math.floor(Math.random() * this.width)
+      const yOffset = Math.floor(Math.random() * this.height)
+
+      const offset = new Vector2(xOffset, yOffset)
+
+      for(const [point, cell] of Object.entries(structure)) {
+        const pos = Vector2.fromCoords(point).add(offset)
+        this.cells[pos.toString()] = cell
       }
     }
 
-    for (const coord of Object.keys(this.cells)) {
-      this.calculateWallSprite(Vector2.fromCoords(coord));
+    for (const coord in this.cells) {
+      const cellPos = Vector2.fromCoords(coord)
+      if (this.getCell(cellPos).getType() === TileType.WALL) {
+        this.getCell(cellPos).setSprite(this.calculateWallSprite(cellPos));
+      }
     }
+  }
+
+  public getCells() {
+    return this.cells
   }
 
   getCell(position: Vector2) {
@@ -34,7 +48,7 @@ export default class Map {
       return this.cells[position.toString()];
     }
 
-    return EmptyCell();
+    return WallCell();
   }
 
   public digCell(position: Vector2) {

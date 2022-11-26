@@ -68,6 +68,6 @@ export default class Cell {
   }
 }
 
-export const EmptyCell = () => new Cell(false, true, true, TileType.WALL);
+export const WallCell = () => new Cell(false, true, true, TileType.WALL);
 
 export const FloorCell = () => new Cell(true, false, false, TileType.FLOOR);
